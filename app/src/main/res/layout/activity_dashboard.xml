@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:background="@drawable/bluebg"
+        android:orientation="vertical"
+        android:layout_height="match_parent"
+        tools:context=".DashboardActivity">
+
+    <RelativeLayout android:layout_marginTop="10dp" android:layout_width="match_parent" android:layout_height="wrap_content">
+<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Dashboard" android:layout_centerInParent="true" android:textColor="@android:color/white" android:textSize="18sp"/>
+        <ImageButton android:layout_width="wrap_content"  android:layout_height="wrap_content" android:layout_marginRight="15dp" android:layout_marginTop="15dp" android:layout_alignParentRight="true" android:layout_centerVertical="true" android:background="@android:color/transparent" android:src="@drawable/dots_icon"/>
+    </RelativeLayout>
+
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="60dp"
+                  android:layout_marginLeft="20dp"
+                  android:layout_marginRight="20dp"
+                  android:layout_gravity="center_horizontal"
+                  android:orientation="horizontal" android:weightSum="10">
+        <ImageButton android:layout_width="0dp"
+                     android:id="@+id/btnCamera"
+                     android:scaleType="fitXY"
+                   android:layout_height="75dp" android:layout_weight="2"
+                   android:src="@drawable/camera" android:background="@android:color/transparent" />
+
+        <ImageView android:layout_width="0dp"
+                   android:visibility="invisible"
+                   android:layout_height="60dp" android:layout_weight="4"
+                   android:src="@drawable/camera" android:background="@android:color/transparent" />
+
+        <Button android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/profile_settings"
+                android:text="Profile Settings"
+                android:id="@+id/btnProfileSettings"
+                android:textColor="@android:color/white" />
+
+    </LinearLayout>
+
+    <RelativeLayout android:layout_width="match_parent"
+                  android:orientation="horizontal"
+                    android:layout_marginBottom="15dp"
+                  android:layout_marginTop="25dp" android:layout_height="50dp"
+                  android:background="@drawable/base">
+
+        <ImageView android:padding="4dp" android:layout_centerInParent="true" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/empirelogowhite"/>
+
+    </RelativeLayout>
+
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:layout_marginLeft="10dp"
+                  android:layout_marginRight="10dp"
+                  android:layout_marginBottom="10dp"
+                  android:orientation="vertical" android:weightSum="4">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="2" android:orientation="horizontal" android:weightSum="2">
+                <LinearLayout android:layout_width="0dp"
+                              android:clickable="true"
+
+                              android:id="@+id/crmLayout"
+                              android:background="@drawable/shape" android:layout_height="match_parent" android:layout_weight="1" android:weightSum="4" android:orientation="vertical">
+
+                    <ImageView android:layout_width="match_parent"
+                               android:layout_height="0dp"
+                               android:layout_weight="3.5"
+                               android:clickable="false"
+
+                               android:scaleType="fitXY"
+                               android:src="@drawable/img"/>
+
+                    <TextView android:layout_width="wrap_content"  android:clickable="false"
+                              android:layout_gravity="center_horizontal" android:textSize="20sp" android:layout_height="wrap_content" android:layout_marginTop="15dp" android:text="CRM" android:textColor="@android:color/black" android:textStyle="bold"/>
+                </LinearLayout>
+            <LinearLayout android:layout_marginLeft="10dp"
+                          android:layout_width="0dp"
+                          android:background="@drawable/shape"
+                          android:layout_height="match_parent"
+                          android:id="@+id/notesLayout"
+                          android:layout_weight="1" android:weightSum="4"
+                          android:orientation="vertical">
+
+                <ImageView android:layout_width="match_parent"
+                           android:layout_height="0dp"
+                           android:layout_weight="3.5"
+                           android:scaleType="fitXY"
+                           android:src="@drawable/img2"/>
+
+                <TextView android:layout_width="wrap_content" android:layout_gravity="center_horizontal" android:textSize="20sp" android:layout_height="wrap_content" android:layout_marginTop="15dp" android:text="Notes" android:textColor="@android:color/black" android:textStyle="bold"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout android:layout_marginTop="15dp" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="2" android:orientation="horizontal">
+
+            <LinearLayout android:layout_width="0dp" android:background="@drawable/shape"
+                          android:id="@+id/myDocumentsLayout"
+                          android:layout_height="match_parent"
+                          android:layout_weight="1" android:weightSum="4" android:orientation="vertical">
+
+                <ImageView android:layout_width="match_parent"
+                           android:layout_height="0dp"
+                           android:layout_weight="3.5"
+                           android:scaleType="fitXY"
+                           android:src="@drawable/img3"/>
+
+                <TextView android:layout_width="wrap_content" android:layout_gravity="center_horizontal" android:textSize="20sp" android:layout_height="wrap_content" android:layout_marginTop="15dp" android:text="MY DOCUMENTS" android:textColor="@android:color/black" android:textStyle="bold"/>
+            </LinearLayout>
+            <LinearLayout android:layout_marginLeft="10dp" android:layout_width="0dp" android:background="@drawable/shape" android:layout_height="match_parent" android:layout_weight="1" android:weightSum="4" android:orientation="vertical" android:id="@+id/myResourcesLayout">
+
+                <ImageView android:layout_width="match_parent"
+                           android:layout_height="0dp"
+                           android:layout_weight="3.5"
+                           android:scaleType="fitXY"
+                           android:src="@drawable/img4"/>
+
+                <TextView android:layout_width="wrap_content" android:layout_gravity="center_horizontal" android:textSize="20sp" android:layout_height="wrap_content" android:layout_marginTop="15dp" android:text="RESOURCE CENTER" android:textColor="@android:color/black" android:textStyle="bold"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

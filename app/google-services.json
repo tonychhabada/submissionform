@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "2515367865",
+    "firebase_url": "https://quickstart-1563772816825.firebaseio.com",
+    "project_id": "quickstart-1563772816825",
+    "storage_bucket": "quickstart-1563772816825.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:2515367865:android:ba8676fd5894974a",
+        "android_client_info": {
+          "package_name": "com.submissionform"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "2515367865-f3olp39d4c2v75mqluvup87sfmnn46o1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBHTg3GLedP6V99K-4yt38ecXnNb6G50eY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "2515367865-f3olp39d4c2v75mqluvup87sfmnn46o1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
