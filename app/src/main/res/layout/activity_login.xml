@@ -26,7 +26,7 @@
                 android:layout_height="wrap_content">
 
             <EditText
-                    android:id="@+id/editText"
+                    android:id="@+id/editUserName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:imeOptions="actionNext"
@@ -46,7 +46,7 @@
                     android:layout_height="wrap_content">
 
                 <EditText
-                        android:id="@+id/editText1"
+                        android:id="@+id/editPassword"
                         android:inputType="textPassword"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

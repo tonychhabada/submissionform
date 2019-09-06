@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 import com.submissionform.Model.InputDataModel;
+import com.submissionform.Model.Lead;
 import com.submissionform.Model.Notes;
 import com.submissionform.R;
 
@@ -15,11 +16,11 @@ import java.util.List;
 
 public class FormsAdapter extends BaseAdapter {
 
-    private List<InputDataModel> forms;
+    private ArrayList<Lead> forms;
     private Context context;
 
 
-    public FormsAdapter(Context context, List<InputDataModel> forms){
+    public FormsAdapter(Context context, ArrayList<Lead> forms){
         this.context = context;
         this.forms = forms;
 
@@ -43,13 +44,13 @@ public class FormsAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = li.inflate(R.layout.custom_leads_row, null);//set layout for displaying i
-        InputDataModel obj = forms.get(position);
+        Lead obj = forms.get(position);
         TextView leadsFullName = (TextView)view.findViewById(R.id.leadsFullName);
         TextView leadsEmail = (TextView)view.findViewById(R.id.leadsEmail);
         TextView leadsCreated = (TextView)view.findViewById(R.id.leadsDate);
-        leadsCreated.setText(obj.leadCreated);
-        leadsFullName.setText(obj.fullName);
-        leadsEmail.setText(obj.email);
+        leadsCreated.setText(obj.getCreatedDate());
+        leadsFullName.setText(obj.getFullName());
+        leadsEmail.setText(obj.getEmail());
         return view;
     }
 }

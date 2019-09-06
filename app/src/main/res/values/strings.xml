@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Submission Form</string>
+    <string name="pref_user_profile">User Profile</string>
+    <string name="pref_update_setting">Update Settings</string>
+    <string name="pref_user_name">Change Password</string>
+    <string name="pref_user_name_summary">Change your password</string>
+
+    <string name="pref_logout">Sign Out</string>
+    <string name="pref_logout_summary">Sign Out of the app</string>
 </resources>

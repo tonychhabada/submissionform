@@ -27,7 +27,7 @@ class DashboardActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
 
-        FirebaseApp.initializeApp(this)
+//        FirebaseApp.initializeApp(this)
 // ...
         database = FirebaseDatabase.getInstance().reference
 //
@@ -55,9 +55,10 @@ class DashboardActivity : AppCompatActivity() {
 
         }
         myResourcesLayout.setOnClickListener {
-            var intent = Intent(this,MyResourcesCenter::class.java)
-            startActivity(intent)
-
+//            var intent = Intent(this,MyResourcesCenter::class.java)
+//            startActivity(intent)
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/channel/UCZhm6Wo_GHOktZr2x5iCgWg/featured"))
+            startActivity(browserIntent)
         }
         btnCamera.setOnClickListener {
             startDialog()

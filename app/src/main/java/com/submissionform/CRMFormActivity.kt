@@ -19,13 +19,15 @@ import android.text.TextUtils
 import android.view.View
 import android.widget.AdapterView
 import android.R.attr.country
+import android.content.Context
+import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import java.text.SimpleDateFormat
 import java.util.*
 import android.widget.AdapterView.OnItemSelectedListener
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import com.submissionform.Model.Lead
+import com.submissionform.utilities.Common
 
 
 class CRMFormActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
@@ -45,6 +47,7 @@ class CRMFormActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
 
             }
     }
+    var maxid:Long = 0
     private lateinit var database: DatabaseReference
     var applicationStatus = "Yes"
     var referralSourceValue = "Realtor Referral"
@@ -53,17 +56,31 @@ class CRMFormActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
 
     companion object{
 
-       lateinit var form:InputDataModel;
+       lateinit var form:Lead;
     }
 
     var update = false;
-    var selectedSave = "CRM"
+    var selectedSave = "Document"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_crmform)
         setTitle("New Lead")
         getSupportActionBar()?.setDisplayHomeAsUpEnabled(true);
         database = FirebaseDatabase.getInstance().reference
+        database.addValueEventListener( object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                if(p0.exists()){
+                    maxid = p0.childrenCount
+
+                }
+            }
+
+
+        })
         spinner.onItemSelectedListener = this;
         spinnerReferral.onItemSelectedListener = object : OnItemSelectedListener {
 
@@ -105,7 +122,7 @@ class CRMFormActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
     update = true;
     btnSubmit.setText("Update")
     editEmail.setText(form.email)
-            referralSourceValue = form.referralSource
+            referralSourceValue = form.referralSource!!
             if(referralSourceValue == "Realtor Referral"){
                 spinnerReferral.setSelection(0)
 
@@ -115,7 +132,7 @@ class CRMFormActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
                 spinnerReferral.setSelection(2)
 
             }
-    applicationStatus = form.applicationStatus;
+    applicationStatus = form.applicationComplete!!;
 
             if(applicationStatus.equals("Yes")){
                 spinner.setSelection(0)
@@ -130,7 +147,7 @@ class CRMFormActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
     editTextName.setText(form.fullName)
     editPhone.setText(form.phone)
     editLoanNotes.setText(form.loanNotes)
-    edtReferralSource.setText(form.referralSourceOther)
+    edtReferralSource.setText(form.referralSourceOther!!)
 }
 
         radioSaving.setOnCheckedChangeListener { group, checkedId ->
@@ -157,29 +174,43 @@ class CRMFormActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
 //                }
             }else if(update){
 
-                AsyncTask.execute {
-                    // Insert Data
-                    val db = Room.databaseBuilder(
-                        applicationContext,
-                        AppDatabase::class.java, "submission"
-                    ).build()
-
+//                AsyncTask.execute {
+//                    // Insert Data
+//                    val db = Room.databaseBuilder(
+//                        applicationContext,
+//                        AppDatabase::class.java, "submission"
+//                    ).build()
+//
                     form.email = editEmail.text.toString()
                     form.fullName = editTextName.text.toString();
                     form.phone = editPhone.text.toString();
                     form.loanNotes = editLoanNotes.text.toString();
                     form.referralSource = referralSourceValue
-                    if(referralSourceValue == "Other"){
-                        form.whetherReferralSourceOther = true
-                        form.referralSourceOther = edtReferralSource.text.toString()
+                var otherSource = false;
 
-                    }else{
-                        form.whetherReferralSourceOther = false
-                        form.referralSourceOther = ""
-
-                    }
-                    form.applicationStatus = applicationStatus;
-                    db.inputDao().update(form)
+                var otherSourceText = "";
+                if(referralSourceValue == "Other"){
+                    otherSource = true
+                    otherSourceText = edtReferralSource.text.toString()
+//
+                }else{
+                    otherSource = false
+                    otherSourceText = "";
+//
+                }
+                form.referralSourceOther = otherSourceText
+                database.child("leads").child(form.leadsId).setValue(form)
+//                    if(referralSourceValue == "Other"){
+//                        form.whetherReferralSourceOther = true
+//                        form.referralSourceOther = edtReferralSource.text.toString()
+//
+//                    }else{
+//                        form.whetherReferralSourceOther = false
+//                        form.referralSourceOther = ""
+//
+//                    }
+//                    form.applicationStatus = applicationStatus;
+//                    db.inputDao().update(form)
                     runOnUiThread {
                         editEmail.setText("")
                         editTextName.setText("")
@@ -191,42 +222,60 @@ class CRMFormActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
                     }
 
 
-                }
+//                }
 
-                Toast.makeText(this,"Form Updated Locally",Toast.LENGTH_LONG).show()
-
+//                Toast.makeText(this,"Form Updated Locally",Toast.LENGTH_LONG).show()
+Common.sharedInsance.showDialog(this@CRMFormActivity,"Lead/Referral Updated")
             }else{
 //                var date = Date();
                 val pattern = "EEE dd, MMM yyyy hh:mm:ss "
                 val simpleDateFormat = SimpleDateFormat(pattern)
-                val lead = Lead(editLoanNotes.text.toString(),applicationStatus,referralSourceValue)
-
-                database.child("leads").child(database.push().key!!).setValue(lead)
                 val date = simpleDateFormat.format(Date())
-                AsyncTask.execute {
-                    // Insert Data
-                    val db = Room.databaseBuilder(
-                        applicationContext,
-                        AppDatabase::class.java, "submission"
-                    ).build()
-                    var input = InputDataModel()
-                    input.email = editEmail.text.toString()
-                    input.fullName = editTextName.text.toString();
-                    input.phone = editPhone.text.toString();
-                    input.loanNotes = editLoanNotes.text.toString();
-                    input.referralSource = referralSourceValue
-                    if(referralSourceValue == "Other"){
-                        input.whetherReferralSourceOther = true
-                        input.referralSourceOther = edtReferralSource.text.toString()
-
+                var otherSource = false;
+                var otherSourceText = "";
+                if(referralSourceValue == "Other"){
+                        otherSource = true
+                        otherSourceText = edtReferralSource.text.toString()
+//
                     }else{
-                        input.whetherReferralSourceOther = false
-                        input.referralSourceOther = ""
-
+                        otherSource = false
+                    otherSourceText = "";
+//
                     }
-                    input.applicationStatus = applicationStatus
-                    input.leadCreated = date
-                    db.inputDao().insertAll(input)
+                val lead = Lead(editTextName.text.toString(),editEmail.text.toString(),editPhone.text.toString(),editLoanNotes.text.toString(),applicationStatus,referralSourceValue,
+                    Common.sharedInsance.getListPreference(this@CRMFormActivity,"userid"),date,maxid.toString(),otherSourceText,otherSource)
+
+                database.child("leads").child(maxid.toString()).setValue(lead)
+
+//                AsyncTask.execute {
+                    // Insert Data
+//                    val db = Room.databaseBuilder(
+//                        applicationContext,
+//                        AppDatabase::class.java, "submission"
+//                    ).build()
+//                    var input = InputDataModel()
+//                    input.email = editEmail.text.toString()
+//                    input.fullName = editTextName.text.toString();
+//                    input.phone = editPhone.text.toString();
+//                    input.loanNotes = editLoanNotes.text.toString();
+//                    input.referralSource = referralSourceValue
+//                    if(referralSourceValue == "Other"){
+//                        input.whetherReferralSourceOther = true
+//                        input.referralSourceOther = edtReferralSource.text.toString()
+//
+//                    }else{
+//                        input.whetherReferralSourceOther = false
+//                        input.referralSourceOther = ""
+//
+//                    }
+//                    input.applicationStatus = applicationStatus
+//                    input.leadCreated = date
+//                    db.inputDao().insertAll(input)
+                editEmail.hideKeyboard()
+                editTextName.hideKeyboard()
+                editPhone.hideKeyboard()
+                editLoanNotes.hideKeyboard()
+                edtReferralSource.setText("")
                     runOnUiThread {
                         editEmail.setText("")
                         editTextName.setText("")
@@ -237,9 +286,9 @@ class CRMFormActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
                         spinnerReferral.setSelection(0)
                     }
 
-                }
+//                }
 
-                Toast.makeText(this,"Form Saved Locally",Toast.LENGTH_LONG).show()
+                Common.sharedInsance.showDialog(this@CRMFormActivity,"Lead/Referral Saved")
                 if (selectedSave == "Email") {
 
                     var body = editTextName.text.toString() + "\n"
@@ -260,6 +309,11 @@ class CRMFormActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
             }
 
         }
+    }
+
+    fun View.hideKeyboard() {
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(windowToken, 0)
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.getItemId()) {

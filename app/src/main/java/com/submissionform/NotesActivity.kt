@@ -7,28 +7,33 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import com.submissionform.Model.InputDataModel
-import com.submissionform.Model.NewNote
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.submissionform.Model.Lead
+
 import com.submissionform.Model.Notes
-import com.submissionform.Room.AppDatabase
-import com.submissionform.adapter.FormsAdapter
 import com.submissionform.adapter.NotesAdapter
-import kotlinx.android.synthetic.main.activity_form_list.*
+import com.submissionform.utilities.Common
+
 import kotlinx.android.synthetic.main.activity_notes.*
 
 class NotesActivity : AppCompatActivity() {
-    private lateinit var  notes: List<NewNote>
+    var list = java.util.ArrayList<Notes>();
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_notes)
         setTitle("Notes")
         getSupportActionBar()?.setDisplayHomeAsUpEnabled(true);
-        val notes: ArrayList<Notes> = ArrayList()
+        listViewNotes.setOnItemClickListener { parent, view, position, id ->
+            var intent = Intent(this,NewNotesActivity::class.java)
+            intent.putExtra("update",true)
+            NewNotesActivity.note = list.get(position)
 
-//        notes.add(Notes("","Notes","testt"))
-//        notes.add(Notes("","Notes","testt"))
-//        notes.add(Notes("","Notes","testt"))
-//        listViewNotes.adapter = NotesAdapter(this,notes);
+            startActivity(intent)
+        }
+
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 
@@ -53,20 +58,28 @@ class NotesActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        AsyncTask.execute {
-            // Insert Data
-            val db = Room.databaseBuilder(
-                applicationContext,
-                AppDatabase::class.java, "submission"
-            ).build()
 
 
-            notes = db.inputDao().notes
-            runOnUiThread {
 
-                listViewNotes.adapter = NotesAdapter(this,notes)
+        list.clear()
+        val reference = FirebaseDatabase.getInstance().reference
+        val query = reference.child("notes").orderByChild("userid").equalTo(Common.sharedInsance.getListPreference(this,"userid"))
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    // dataSnapshot is the "issue" node with all children with id 0
+                    var cd = dataSnapshot.children
+                    for (data in dataSnapshot.children) {
+                        var notes = Notes(data.key.toString(),data.child("title").value.toString(),data.child("note").value.toString(),data.child("createdDate").value.toString())
+                        list.add(notes)
+                        listViewNotes.adapter = NotesAdapter(this@NotesActivity,list)
+
+                    }
+                }
             }
 
-        }
+            override fun onCancelled(databaseError: DatabaseError) {
+            }
+        })
     }
 }

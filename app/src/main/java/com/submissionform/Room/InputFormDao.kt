@@ -1,13 +1,11 @@
 package com.submissionform.Room
 
 
-import androidx.room.Delete
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import com.submissionform.Model.InputDataModel
 import androidx.room.Update
-import com.submissionform.Model.NewNote
 
 
 @Dao
@@ -26,11 +24,11 @@ interface InputFormDao {
     fun insertAll(vararg users: InputDataModel)
 
 
-    @get:Query("SELECT * FROM Notes")
-    val notes: List<NewNote>
+//    @get:Query("SELECT * FROM Notes")
+//    val notes: List<NewNote>
 
-    @Insert
-    fun insertNewNote(vararg users: NewNote)
+//    @Insert
+//    fun insertNewNote(vararg users: NewNote)
 
 
 //    @Delete
