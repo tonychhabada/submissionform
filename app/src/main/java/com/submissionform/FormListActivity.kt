@@ -38,13 +38,7 @@ private lateinit var  forms: List<InputDataModel>
             var intent = Intent(this,CRMFormActivity::class.java)
             intent.putExtra("update",true)
             CRMFormActivity.form = list.get(position)
-//            var leads = list.get(position).leadsId
-//            Log.d("","");
-//            intent.putExtra("updateObject",forms.get(position))
             startActivity(intent)
-
-
-
         }
 
     }
@@ -74,7 +68,7 @@ list.clear()
                     // dataSnapshot is the "issue" node with all children with id 0
                     var cd = dataSnapshot.children
                     for (data in dataSnapshot.children) {
-                        val fullName = data.child("fullName").value
+
                         var lead = Lead(data.child("fullName").value.toString(),data.child("email").value.toString(),data.child("phone").value.toString(),data.child("loanNotes").value.toString(),data.child("applicationComplete").value.toString(),data.child("referralSource").value.toString(),data.child("userid").value.toString(),data.child("createdDate").value.toString(),data.key!!,data.child("referralSourceOther").value.toString(),data.child("whetherReferralSourceOther").value as Boolean)
                         list.add(lead)
 

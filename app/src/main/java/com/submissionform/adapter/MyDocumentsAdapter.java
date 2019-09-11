@@ -5,7 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 import com.submissionform.Model.Documents;
 import com.submissionform.R;
 
@@ -41,11 +44,10 @@ public class MyDocumentsAdapter extends BaseAdapter {
         LayoutInflater li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = li.inflate(R.layout.custom_documents_row, null);//set layout for displaying i
         Documents obj = documents.get(position);
-        TextView documentsTitle = (TextView)view.findViewById(R.id.documentsTitle);
-        TextView documentsUrl = (TextView)view.findViewById(R.id.documentsUrl);
+        ImageView imageView = (ImageView)view.findViewById(R.id.imageView);
 
-        documentsTitle.setText(obj.getDocumentTitle());
-        documentsUrl.setText(obj.getDocumentURL());
+        Picasso.get().load(obj.getDocumentURL()).into(imageView);
+
         return view;
     }
 }

@@ -62,30 +62,50 @@ class NewNotesActivity : AppCompatActivity() {
                 showDialog("All the fields are required")
 
             }else if(update) {
+                if (!Common.sharedInsance.getBooleanPreference(this, "userEnabled")) {
+                    Common.sharedInsance.showDialog(
+                        this@NewNotesActivity,
+                        "You have been disabled, contact admin to enable."
+                    )
 
-                var newNote = NewNotes(edtNotesTitle.text.toString(),edtNotes.text.toString(),
-                    Common.sharedInsance.getListPreference(this@NewNotesActivity,"userid"),date)
+                } else {
+                    var newNote = NewNotes(
+                        edtNotesTitle.text.toString(),
+                        edtNotes.text.toString(),
+                        Common.sharedInsance.getListPreference(this@NewNotesActivity, "userid"),
+                        date
+                    )
 
-                database.child("notes").child(note.id).setValue(newNote)
-                Common.sharedInsance.showDialog(this@NewNotesActivity,"Notes Updated")
-                edtNotesTitle.setText("")
-                edtNotes.setText("")
-                edtNotesTitle.hideKeyboard()
-                edtNotes.hideKeyboard()
+                    database.child("notes").child(note.id).setValue(newNote)
+                    Common.sharedInsance.showDialog(this@NewNotesActivity, "Notes Updated")
+                    edtNotesTitle.setText("")
+                    edtNotes.setText("")
+                    edtNotesTitle.hideKeyboard()
+                    edtNotes.hideKeyboard()
+                }
             }else {
 
+                if (!Common.sharedInsance.getBooleanPreference(this, "userEnabled")) {
+                    Common.sharedInsance.showDialog(
+                        this@NewNotesActivity,
+                        "You have been disabled, contact admin to enable."
+                    )
 
-                var newNote = NewNotes(edtNotesTitle.text.toString(),edtNotes.text.toString(),
-                    Common.sharedInsance.getListPreference(this@NewNotesActivity,"userid"),date)
-                database.child("notes").child(maxid.toString()).setValue(newNote)
-                Common.sharedInsance.showDialog(this@NewNotesActivity,"Notes Saved")
-
-//                }
-                edtNotesTitle.setText("")
-                edtNotes.setText("")
-                edtNotesTitle.hideKeyboard()
-                edtNotes.hideKeyboard()
-                showDialog("New note saved")
+                } else {
+                    var newNote = NewNotes(
+                        edtNotesTitle.text.toString(),
+                        edtNotes.text.toString(),
+                        Common.sharedInsance.getListPreference(this@NewNotesActivity, "userid"),
+                        date
+                    )
+                    database.child("notes").child(maxid.toString()).setValue(newNote)
+                    Common.sharedInsance.showDialog(this@NewNotesActivity, "Notes Saved")
+                    edtNotesTitle.setText("")
+                    edtNotes.setText("")
+                    edtNotesTitle.hideKeyboard()
+                    edtNotes.hideKeyboard()
+                    showDialog("New note saved")
+                }
             }
         }
     }

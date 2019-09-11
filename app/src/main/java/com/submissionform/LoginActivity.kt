@@ -47,6 +47,8 @@ class LoginActivity : AppCompatActivity() {
                 val query = reference.child("users")
                 query.addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
+
+                        var exists = false;
                         if (dataSnapshot.exists()) {
                             // dataSnapshot is the "issue" node with all children with id 0
                             for (data in dataSnapshot.children) {
@@ -58,18 +60,23 @@ class LoginActivity : AppCompatActivity() {
                                         this@LoginActivity,
                                         "userid"
                                     )
+                                    exists = true;
                                     var intent =
                                         Intent(this@LoginActivity, DashboardActivity::class.java)
                                     startActivity(intent)
                                 } else {
+                                exists = false;
 
-                                    Common.sharedInsance.showDialog(
-                                        this@LoginActivity,
-                                        "Invalid credentials"
-                                    )
                                 }
 
                             }
+                        }
+                        if(!exists){
+
+                            Common.sharedInsance.showDialog(
+                                this@LoginActivity,
+                                "Invalid credentials"
+                            )
                         }
                     }
 

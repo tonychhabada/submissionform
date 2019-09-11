@@ -40,7 +40,10 @@ class RegisterActivity : AppCompatActivity() {
                 var user = User(
                     editUsername.text.toString(),
                     editPassword.text.toString(),
-                    editName.text.toString()
+                    editName.text.toString(),
+                    true,
+                    maxid.toString()
+
                 )
                 database.child("users").child(maxid.toString()).setValue(user)
                 showDialog()

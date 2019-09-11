@@ -33,7 +33,7 @@ import com.submissionform.utilities.Common
 class CRMFormActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -44,7 +44,6 @@ class CRMFormActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
                 applicationStatus = "No"
             } else {
                 applicationStatus = "In Progress"
-
             }
     }
     var maxid:Long = 0
@@ -105,7 +104,7 @@ class CRMFormActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
             }
 
             override fun onNothingSelected(adapterView: AdapterView<*>) {
-                // TODO Auto-generated method stub
+
 
             }
         }
@@ -132,7 +131,7 @@ class CRMFormActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
                 spinnerReferral.setSelection(2)
 
             }
-    applicationStatus = form.applicationComplete!!;
+            applicationStatus = form.applicationComplete!!;
 
             if(applicationStatus.equals("Yes")){
                 spinner.setSelection(0)
@@ -144,15 +143,15 @@ class CRMFormActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
 
                 spinner.setSelection(2)
             }
-    editTextName.setText(form.fullName)
-    editPhone.setText(form.phone)
-    editLoanNotes.setText(form.loanNotes)
-    edtReferralSource.setText(form.referralSourceOther!!)
+            editTextName.setText(form.fullName)
+            editPhone.setText(form.phone)
+            editLoanNotes.setText(form.loanNotes)
+            edtReferralSource.setText(form.referralSourceOther!!)
 }
 
         radioSaving.setOnCheckedChangeListener { group, checkedId ->
             if(R.id.radioCRM ==  checkedId){
-                selectedSave = "CRM"
+                selectedSave = "Document"
             }else if(R.id.radioEmail ==  checkedId){
                 selectedSave = "Email"
             }else if(R.id.radioBoth ==  checkedId){
@@ -180,26 +179,34 @@ class CRMFormActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
 //                        applicationContext,
 //                        AppDatabase::class.java, "submission"
 //                    ).build()
-//
+                if (!Common.sharedInsance.getBooleanPreference(this, "userEnabled")) {
+                    Common.sharedInsance.showDialog(
+                        this@CRMFormActivity,
+                        "You have been disabled, contact admin to enable."
+                    )
+
+                } else {
                     form.email = editEmail.text.toString()
                     form.fullName = editTextName.text.toString();
                     form.phone = editPhone.text.toString();
                     form.loanNotes = editLoanNotes.text.toString();
                     form.referralSource = referralSourceValue
-                var otherSource = false;
+                    var otherSource = false;
 
-                var otherSourceText = "";
-                if(referralSourceValue == "Other"){
-                    otherSource = true
-                    otherSourceText = edtReferralSource.text.toString()
+                    var otherSourceText = "";
+                    if (referralSourceValue == "Other") {
+                        otherSource = true
+                        otherSourceText = edtReferralSource.text.toString()
 //
-                }else{
-                    otherSource = false
-                    otherSourceText = "";
+                    } else {
+                        otherSource = false
+                        otherSourceText = "";
 //
-                }
-                form.referralSourceOther = otherSourceText
-                database.child("leads").child(form.leadsId).setValue(form)
+                    }
+                    form.whetherReferralSourceOther = otherSource
+                    form.referralSourceOther = otherSourceText
+                    database.child("leads").child(form.leadsId).setValue(form)
+
 //                    if(referralSourceValue == "Other"){
 //                        form.whetherReferralSourceOther = true
 //                        form.referralSourceOther = edtReferralSource.text.toString()
@@ -225,25 +232,45 @@ class CRMFormActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
 //                }
 
 //                Toast.makeText(this,"Form Updated Locally",Toast.LENGTH_LONG).show()
-Common.sharedInsance.showDialog(this@CRMFormActivity,"Lead/Referral Updated")
-            }else{
+                    Common.sharedInsance.showDialog(this@CRMFormActivity, "Lead/Referral Updated")
+                }
+            }else {
 //                var date = Date();
+
+                if (!Common.sharedInsance.getBooleanPreference(this, "userEnabled")) {
+                    Common.sharedInsance.showDialog(
+                        this@CRMFormActivity,
+                        "You have been disabled, contact admin to enable."
+                    )
+
+                } else{
                 val pattern = "EEE dd, MMM yyyy hh:mm:ss "
                 val simpleDateFormat = SimpleDateFormat(pattern)
                 val date = simpleDateFormat.format(Date())
                 var otherSource = false;
                 var otherSourceText = "";
-                if(referralSourceValue == "Other"){
-                        otherSource = true
-                        otherSourceText = edtReferralSource.text.toString()
+                if (referralSourceValue == "Other") {
+                    otherSource = true
+                    otherSourceText = edtReferralSource.text.toString()
 //
-                    }else{
-                        otherSource = false
+                } else {
+                    otherSource = false
                     otherSourceText = "";
 //
-                    }
-                val lead = Lead(editTextName.text.toString(),editEmail.text.toString(),editPhone.text.toString(),editLoanNotes.text.toString(),applicationStatus,referralSourceValue,
-                    Common.sharedInsance.getListPreference(this@CRMFormActivity,"userid"),date,maxid.toString(),otherSourceText,otherSource)
+                }
+                val lead = Lead(
+                    editTextName.text.toString(),
+                    editEmail.text.toString(),
+                    editPhone.text.toString(),
+                    editLoanNotes.text.toString(),
+                    applicationStatus,
+                    referralSourceValue,
+                    Common.sharedInsance.getListPreference(this@CRMFormActivity, "userid"),
+                    date,
+                    maxid.toString(),
+                    otherSourceText,
+                    otherSource
+                )
 
                 database.child("leads").child(maxid.toString()).setValue(lead)
 
@@ -287,30 +314,24 @@ Common.sharedInsance.showDialog(this@CRMFormActivity,"Lead/Referral Updated")
                     }
 
 //                }
-
                 Common.sharedInsance.showDialog(this@CRMFormActivity,"Lead/Referral Saved")
                 if (selectedSave == "Email") {
-
                     var body = editTextName.text.toString() + "\n"
                     body += editEmail.text.toString() + "\n"
                     body += editPhone.text.toString() + "\n"
                     body += editLoanNotes.text.toString() + "\n"
                     body += edtReferralSource.text.toString()
-
-
                     val emailIntent = Intent(android.content.Intent.ACTION_SEND)
                     emailIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    emailIntent.type = "vnd.android.cursor.item/email"
-//            emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, arrayOf("abc@xyz.com"))
+                    emailIntent.type = "vnd.android.cursor.item/email" //            emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, arrayOf("abc@xyz.com"))
                     emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Mortage data")
                     emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, body)
                     startActivity(Intent.createChooser(emailIntent, "Send mail using..."))
                 }
             }
-
+            }
         }
     }
-
     fun View.hideKeyboard() {
         val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(windowToken, 0)

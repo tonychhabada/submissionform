@@ -37,9 +37,9 @@ class ProfileSettings : AppCompatActivity(),SharedPreferences.OnSharedPreference
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_settings)
-
+        setTitle("Settings")
         getSupportActionBar()?.setDisplayHomeAsUpEnabled(true);
-    // android.R.id.content is probably for old style activity
+
     supportFragmentManager.beginTransaction()
         // .replace(android.R.id.content, SettingsFragment())
         .replace(android.R.id.content, MyPreferenceFragment())
@@ -74,6 +74,15 @@ class MyPreferenceFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.settings);
+        val changePassword = findPreference("changePassword") as Preference
+        changePassword.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+
+            var intent = Intent(activity, ChangePasswordActivity::class.java)
+            startActivity(intent)
+            true
+        }
+
+
         val myPref = findPreference("signout") as Preference
         myPref.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             Common.sharedInsance.saveStringPreference("", activity, "userid")
