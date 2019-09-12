@@ -51,7 +51,7 @@ class CRMFormActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
     var applicationStatus = "Yes"
     var referralSourceValue = "Realtor Referral"
     var status = arrayOf("Yes","No","In Progress")
-    var referralSource = arrayOf("Realtor Referral","Website","Other")
+    var referralSource = arrayOf("Realtor Referral","Website","Open house","Zillow","Other")
 
     companion object{
 
@@ -95,6 +95,14 @@ class CRMFormActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
                     referralSourceValue = "Website"
                     edtReferralSource.isEnabled = false;
                     edtReferralSource.visibility = View.INVISIBLE
+                }else if(position == 1){
+                    referralSourceValue = "Open house"
+                    edtReferralSource.isEnabled = false;
+                    edtReferralSource.visibility = View.INVISIBLE
+                }else if(position == 1){
+                    referralSourceValue = "Zillow"
+                    edtReferralSource.isEnabled = false;
+                    edtReferralSource.visibility = View.INVISIBLE
                 }else{
                     edtReferralSource.visibility = View.VISIBLE
                     referralSourceValue = "Other"
@@ -127,8 +135,12 @@ class CRMFormActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
 
             }else if(referralSourceValue == "Website"){
                 spinnerReferral.setSelection(1)
-            }else{
+            }else if(referralSourceValue == "Open house"){
                 spinnerReferral.setSelection(2)
+            }else if(referralSourceValue == "Zillow"){
+                spinnerReferral.setSelection(3)
+            }else{
+                spinnerReferral.setSelection(4)
 
             }
             applicationStatus = form.applicationComplete!!;
@@ -315,7 +327,7 @@ class CRMFormActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
 
 //                }
                 Common.sharedInsance.showDialog(this@CRMFormActivity,"Lead/Referral Saved")
-                if (selectedSave == "Email") {
+                if (selectedSave == "Email" || selectedSave == "Both") {
                     var body = editTextName.text.toString() + "\n"
                     body += editEmail.text.toString() + "\n"
                     body += editPhone.text.toString() + "\n"

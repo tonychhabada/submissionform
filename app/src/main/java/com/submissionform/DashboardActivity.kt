@@ -1,5 +1,6 @@
 package com.submissionform
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -18,30 +19,32 @@ import com.google.firebase.storage.FirebaseStorage
 import com.submissionform.utilities.Common
 import java.io.File
 import android.app.ProgressDialog
+import android.content.pm.PackageManager
+import android.os.Build
+import android.os.StrictMode
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.NonNull
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.firebase.storage.UploadTask
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.storage.StorageReference
 import com.kaopiz.kprogresshud.KProgressHUD
 import com.submissionform.Model.MyDocuments
+import com.tbruyelle.rxpermissions2.RxPermissions
+import java.security.AccessController.getContext
 
 
 class DashboardActivity : AppCompatActivity() {
     var maxid:Long = 0
     protected val CAMERA_REQUEST = 0
     protected val GALLERY_PICTURE = 1
-    private val pictureActionIntent: Intent? = null
-    var bitmap: Bitmap? = null
-    private lateinit var database: DatabaseReference
-    var selectedImagePath: String? = null
 
-    var chooseImg: Button? = null
-    var imgView: ImageView? = null
-    var PICK_IMAGE_REQUEST = 111
+    private lateinit var database: DatabaseReference
+
     var filePath: Uri? = null
     lateinit var progressHUD: KProgressHUD
     var storage = FirebaseStorage.getInstance();
@@ -49,7 +52,9 @@ class DashboardActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
-
+        var builder =  StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+        builder.detectFileUriExposure();
         progressHUD = KProgressHUD.create(this)
             .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
             .setLabel("Please wait")
@@ -132,26 +137,87 @@ class DashboardActivity : AppCompatActivity() {
 
         myAlertDialog.setNegativeButton("Camera",
             DialogInterface.OnClickListener { arg0, arg1 ->
-                val intent = Intent(
+
+//                if (checkSelfPermission(Manifest.permission.CAMERA)
+//                    != PackageManager.PERMISSION_GRANTED) {
+//
+//                    requestPermissions(String[]{ Manifest.permission.CAMERA},
+//                        MY_REQUEST_CODE);
+//                }
+                val permission = ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.CAMERA)
+                if (permission != PackageManager.PERMISSION_GRANTED) {
+//                    Log.i("", "Permission to record denied")
+                }else{
+
+                    var rxPermissions = RxPermissions(this);
+                    rxPermissions
+                        .request(Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE).subscribe {
+
+                            if (it) {
+                                val intent = Intent(
                     MediaStore.ACTION_IMAGE_CAPTURE
                 )
                 val f = File(
                     Environment
                         .getExternalStorageDirectory(), "temp.jpg"
                 )
+                                filePath = Uri.fromFile(f);
                 intent.putExtra(
                     MediaStore.EXTRA_OUTPUT,
-                    Uri.fromFile(f)
+                    filePath
                 )
 
                 startActivityForResult(
                     intent,
                     CAMERA_REQUEST
                 )
+
+                            } else {
+
+                                Log.d("", "")
+                            }
+                        }
+                }// ask single or multiple permission once
+//                val intent = Intent(
+//                    MediaStore.ACTION_IMAGE_CAPTURE
+//                )
+//                val f = File(
+//                    Environment
+//                        .getExternalStorageDirectory(), "temp.jpg"
+//                )
+//                intent.putExtra(
+//                    MediaStore.EXTRA_OUTPUT,
+//                    Uri.fromFile(f)
+//                )
+//
+//                startActivityForResult(
+//                    intent,
+//                    CAMERA_REQUEST
+//                )
             })
         myAlertDialog.show()
     }
+private fun captureImage(){
+//    if( ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            requestPermissions(String[]{android.Manifest.permission.CAMERA},
+//                    CAMERA_REQUEST_CODE);
+//        }
+//        else {
+//            // Open your camera here.
+//        }
 
+
+//    }
+
+    val permission = ContextCompat.checkSelfPermission(this,
+        Manifest.permission.CAMERA)
+
+    if (permission != PackageManager.PERMISSION_GRANTED) {
+//        Log.i(TAG, "Permission to record denied")
+    }
+}
     override fun onResume() {
         super.onResume()
         val reference = FirebaseDatabase.getInstance().reference
@@ -192,9 +258,9 @@ class DashboardActivity : AppCompatActivity() {
                 val uploadTask = childRef.putFile(filePath!!)
 
                 uploadTask.addOnSuccessListener {
-//                    pd.dismiss()
+
                      it.storage.downloadUrl.addOnCompleteListener {
-//                        var re = it.result
+
                          var mydocuments = MyDocuments(maxid.toString(),it.result.toString(),Common.sharedInsance.getListPreference(this@DashboardActivity,"userid"))
                          database.child("documents").child(maxid.toString()).setValue(mydocuments)
                          Common.sharedInsance.showDialog(this@DashboardActivity,"Document uploaded")
@@ -202,7 +268,7 @@ class DashboardActivity : AppCompatActivity() {
                     }
 
                 }.addOnFailureListener { e ->
-
+                    progressHUD.dismiss()
                     var ed = "Upload Failed -> $e"
                     Toast.makeText(this@DashboardActivity, "Upload Failed -> $e", Toast.LENGTH_SHORT)
                         .show()
@@ -211,6 +277,47 @@ class DashboardActivity : AppCompatActivity() {
                 e.printStackTrace()
             }
 
+        }else  if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK ) {
+            val file = File(Environment.getExternalStorageDirectory(), "temp.jpg")
+//            val uri = Uri.fromFile(file)
+
+
+
+              //Uri of camera image
+                var uri = filePath
+
+//            val photo: Bitmap? =  MediaStore.Images.Media.getBitmap(this.contentResolver, Uri.parse( data!!.dataString)   )
+//            // Do something here : set image to an ImageView or save it ..
+//            imgTemp.setImageBitmap(photo)
+//            var uri = data!!.data
+//                var photo = data!!.getExtras().get("data") as Bitmap
+//            imgTemp.setImageBitmap(photo);
+//            val tempUri = Common.sharedInsance.getImageUri(applicationContext, photo)
+//            val finalFile = File(Common.sharedInsance.getRealPathFromURI(tempUri,this@DashboardActivity))
+
+
+
+            val tsLong = System.currentTimeMillis() / 1000
+            val childRef = storageRef.child(tsLong.toString()+".jpg")
+            progressHUD.show()
+            //uploading the image
+            val uploadTask = childRef.putFile(filePath!!)
+            uploadTask.addOnSuccessListener {
+
+                it.storage.downloadUrl.addOnCompleteListener {
+
+                    var mydocuments = MyDocuments(maxid.toString(),it.result.toString(),Common.sharedInsance.getListPreference(this@DashboardActivity,"userid"))
+                    database.child("documents").child(maxid.toString()).setValue(mydocuments)
+                    Common.sharedInsance.showDialog(this@DashboardActivity,"Document uploaded")
+                    progressHUD.dismiss()
+                }
+
+            }.addOnFailureListener { e ->
+                progressHUD.dismiss()
+                var ed = "Upload Failed -> $e"
+                Toast.makeText(this@DashboardActivity, "Upload Failed -> $e", Toast.LENGTH_SHORT)
+                    .show()
+            }
         }
     }
 }

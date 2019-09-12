@@ -142,7 +142,12 @@
                     android:orientation="horizontal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" >
-
+                <RadioButton
+                        android:id="@+id/radioEmail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/black"
+                        android:text="Email" />
                 <RadioButton
                         android:id="@+id/radioCRM"
                         android:layout_width="wrap_content"
@@ -150,13 +155,6 @@
                         android:text="Document"
                         android:textColor="@android:color/black"
                         android:checked="true" />
-
-                <RadioButton
-                        android:id="@+id/radioEmail"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@android:color/black"
-                        android:text="Email" />
 
                 <RadioButton
                         android:id="@+id/radioBoth"
