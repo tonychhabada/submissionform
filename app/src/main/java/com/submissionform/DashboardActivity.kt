@@ -68,44 +68,32 @@ class DashboardActivity : AppCompatActivity() {
 
         database.addValueEventListener( object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-
             }
-
             override fun onDataChange(p0: DataSnapshot) {
                 if(p0.exists()){
                     maxid = p0.childrenCount
-
                 }
             }
-
-
         })
         crmLayout.setOnClickListener {
             var intent = Intent(this,FormListActivity::class.java)
             startActivity(intent)
         }
-
         notesLayout.setOnClickListener {
             var intent = Intent(this,NotesActivity::class.java)
             startActivity(intent)
-
         }
-
-
         myDocumentsLayout.setOnClickListener {
             var intent = Intent(this,MyDocumentsActivity::class.java)
             startActivity(intent)
 
         }
-
         btnProfileSettings.setOnClickListener {
             var intent = Intent(this,ProfileSettings::class.java)
             startActivity(intent)
 
         }
         myResourcesLayout.setOnClickListener {
-//            var intent = Intent(this,MyResourcesCenter::class.java)
-//            startActivity(intent)
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/channel/UCZhm6Wo_GHOktZr2x5iCgWg/featured"))
             startActivity(browserIntent)
         }
@@ -138,16 +126,10 @@ class DashboardActivity : AppCompatActivity() {
         myAlertDialog.setNegativeButton("Camera",
             DialogInterface.OnClickListener { arg0, arg1 ->
 
-//                if (checkSelfPermission(Manifest.permission.CAMERA)
-//                    != PackageManager.PERMISSION_GRANTED) {
-//
-//                    requestPermissions(String[]{ Manifest.permission.CAMERA},
-//                        MY_REQUEST_CODE);
-//                }
                 val permission = ContextCompat.checkSelfPermission(this,
                     Manifest.permission.CAMERA)
                 if (permission != PackageManager.PERMISSION_GRANTED) {
-//                    Log.i("", "Permission to record denied")
+
                 }else{
 
                     var rxPermissions = RxPermissions(this);
@@ -198,26 +180,7 @@ class DashboardActivity : AppCompatActivity() {
             })
         myAlertDialog.show()
     }
-private fun captureImage(){
-//    if( ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            requestPermissions(String[]{android.Manifest.permission.CAMERA},
-//                    CAMERA_REQUEST_CODE);
-//        }
-//        else {
-//            // Open your camera here.
-//        }
 
-
-//    }
-
-    val permission = ContextCompat.checkSelfPermission(this,
-        Manifest.permission.CAMERA)
-
-    if (permission != PackageManager.PERMISSION_GRANTED) {
-//        Log.i(TAG, "Permission to record denied")
-    }
-}
     override fun onResume() {
         super.onResume()
         val reference = FirebaseDatabase.getInstance().reference
@@ -228,14 +191,10 @@ private fun captureImage(){
                 if (dataSnapshot.exists()) {
 
                     for (data in dataSnapshot.children) {
-                        Common.sharedInsance.saveBooleanPreference(data.child("userEnabled").value as Boolean,this@DashboardActivity,"userEnabled")
-
+                        Common.sharedInsance.saveStringPreference(data.child("userEnabled").value as String,this@DashboardActivity,"userEnabled")
                     }
-
-
                 }
             }
-
             override fun onCancelled(databaseError: DatabaseError) {
             }
         })
@@ -286,16 +245,7 @@ private fun captureImage(){
               //Uri of camera image
                 var uri = filePath
 
-//            val photo: Bitmap? =  MediaStore.Images.Media.getBitmap(this.contentResolver, Uri.parse( data!!.dataString)   )
-//            // Do something here : set image to an ImageView or save it ..
-//            imgTemp.setImageBitmap(photo)
-//            var uri = data!!.data
-//                var photo = data!!.getExtras().get("data") as Bitmap
-//            imgTemp.setImageBitmap(photo);
-//            val tempUri = Common.sharedInsance.getImageUri(applicationContext, photo)
-//            val finalFile = File(Common.sharedInsance.getRealPathFromURI(tempUri,this@DashboardActivity))
-
-
+//
 
             val tsLong = System.currentTimeMillis() / 1000
             val childRef = storageRef.child(tsLong.toString()+".jpg")

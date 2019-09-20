@@ -48,7 +48,7 @@ class LoginActivity : AppCompatActivity() {
                 query.addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
 
-                        var exists = false;
+                        var exists = true;
                         if (dataSnapshot.exists()) {
                             // dataSnapshot is the "issue" node with all children with id 0
                             for (data in dataSnapshot.children) {
@@ -64,20 +64,22 @@ class LoginActivity : AppCompatActivity() {
                                     var intent =
                                         Intent(this@LoginActivity, DashboardActivity::class.java)
                                     startActivity(intent)
+                                    finish()
                                 } else {
-                                exists = false;
+                                  exists = false;
 
                                 }
 
                             }
-                        }
-                        if(!exists){
+                            if(!exists){
 
-                            Common.sharedInsance.showDialog(
-                                this@LoginActivity,
-                                "Invalid credentials"
-                            )
+                                Common.sharedInsance.showDialog(
+                                    this@LoginActivity,
+                                    "Invalid credentials"
+                                )
+                            }
                         }
+
                     }
 
                     override fun onCancelled(databaseError: DatabaseError) {

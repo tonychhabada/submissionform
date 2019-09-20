@@ -41,19 +41,8 @@ class ProfileSettings : AppCompatActivity(),SharedPreferences.OnSharedPreference
         getSupportActionBar()?.setDisplayHomeAsUpEnabled(true);
 
     supportFragmentManager.beginTransaction()
-        // .replace(android.R.id.content, SettingsFragment())
         .replace(android.R.id.content, MyPreferenceFragment())
         .commit()
-//
-//        getSupportActionBar()?.setDisplayHomeAsUpEnabled(true);
-
-//        val root = findViewById<View>(android.R.id.list).parent.parent.parent as LinearLayout
-//        val bar =
-//            LayoutInflater.from(this).inflate(R.layout.settings_toolbar, root, false) as Toolbar
-//        root.addView(bar, 0) // insert at top
-//        bar.setNavigationOnClickListener { finish() }
-
-
     }
 //
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

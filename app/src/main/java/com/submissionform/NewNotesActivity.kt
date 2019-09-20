@@ -62,7 +62,7 @@ class NewNotesActivity : AppCompatActivity() {
                 showDialog("All the fields are required")
 
             }else if(update) {
-                if (!Common.sharedInsance.getBooleanPreference(this, "userEnabled")) {
+                if (Common.sharedInsance.getListPreference(this, "userEnabled") == "" || Common.sharedInsance.getListPreference(this, "userEnabled") == "false") {
                     Common.sharedInsance.showDialog(
                         this@NewNotesActivity,
                         "You have been disabled, contact admin to enable."
@@ -85,7 +85,7 @@ class NewNotesActivity : AppCompatActivity() {
                 }
             }else {
 
-                if (!Common.sharedInsance.getBooleanPreference(this, "userEnabled")) {
+                if (Common.sharedInsance.getListPreference(this, "userEnabled") == "" || Common.sharedInsance.getListPreference(this, "userEnabled") == "false") {
                     Common.sharedInsance.showDialog(
                         this@NewNotesActivity,
                         "You have been disabled, contact admin to enable."

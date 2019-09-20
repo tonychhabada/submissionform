@@ -52,12 +52,9 @@ class CRMFormActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
     var referralSourceValue = "Realtor Referral"
     var status = arrayOf("Yes","No","In Progress")
     var referralSource = arrayOf("Realtor Referral","Website","Open house","Zillow","Other")
-
     companion object{
-
        lateinit var form:Lead;
     }
-
     var update = false;
     var selectedSave = "Document"
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,11 +67,9 @@ class CRMFormActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
             override fun onCancelled(p0: DatabaseError) {
 
             }
-
             override fun onDataChange(p0: DataSnapshot) {
                 if(p0.exists()){
                     maxid = p0.childrenCount
-
                 }
             }
 
@@ -191,7 +186,7 @@ class CRMFormActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
 //                        applicationContext,
 //                        AppDatabase::class.java, "submission"
 //                    ).build()
-                if (!Common.sharedInsance.getBooleanPreference(this, "userEnabled")) {
+                if (Common.sharedInsance.getListPreference(this, "userEnabled") == "" || Common.sharedInsance.getListPreference(this, "userEnabled") == "false") {
                     Common.sharedInsance.showDialog(
                         this@CRMFormActivity,
                         "You have been disabled, contact admin to enable."
@@ -215,7 +210,7 @@ class CRMFormActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
                         otherSourceText = "";
 //
                     }
-                    form.whetherReferralSourceOther = otherSource
+//                    form.whetherReferralSourceOther = otherSource
                     form.referralSourceOther = otherSourceText
                     database.child("leads").child(form.leadsId).setValue(form)
 
@@ -249,7 +244,7 @@ class CRMFormActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
             }else {
 //                var date = Date();
 
-                if (!Common.sharedInsance.getBooleanPreference(this, "userEnabled")) {
+                if (Common.sharedInsance.getListPreference(this, "userEnabled") == "" || Common.sharedInsance.getListPreference(this, "userEnabled") == "false") {
                     Common.sharedInsance.showDialog(
                         this@CRMFormActivity,
                         "You have been disabled, contact admin to enable."
@@ -280,8 +275,8 @@ class CRMFormActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
                     Common.sharedInsance.getListPreference(this@CRMFormActivity, "userid"),
                     date,
                     maxid.toString(),
-                    otherSourceText,
-                    otherSource
+                    otherSourceText
+
                 )
 
                 database.child("leads").child(maxid.toString()).setValue(lead)

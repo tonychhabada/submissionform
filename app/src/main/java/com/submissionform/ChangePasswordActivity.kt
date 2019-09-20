@@ -36,25 +36,21 @@ class ChangePasswordActivity : AppCompatActivity() {
                 query.addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         if (dataSnapshot.exists()) {
-                            // dataSnapshot is the "issue" node with all children with id 0
                             var cd = dataSnapshot.children
                             for (data in dataSnapshot.children) {
                                 var password = data.child("password").value.toString()
                                 if (editCurrentPassword.text.toString() != password) {
-
                                     Common.sharedInsance.showDialog(
                                         this@ChangePasswordActivity,
                                         "Invalid Password"
                                     )
                                 }else{
-
                                     var user = User(
                                         data.child("username").value.toString(),
                                        editNewPassword.text.toString(),
                                         data.child("name").value.toString(),
-                                        data.child("userEnabled").value as Boolean,
+                                        data.child("userEnabled").value as String,
                                         Common.sharedInsance.getListPreference(this@ChangePasswordActivity, "userid")
-
                                     )
                                     editCurrentPassword.setText("")
                                     editConfirmPassword.setText("")
@@ -62,7 +58,6 @@ class ChangePasswordActivity : AppCompatActivity() {
                                     editCurrentPassword.hideKeyboard()
                                     editConfirmPassword.hideKeyboard()
                                     editNewPassword.hideKeyboard()
-
                                     database.child("users").child(Common.sharedInsance.getListPreference(this@ChangePasswordActivity, "userid")).setValue(user)
                                     Common.sharedInsance.showDialog(
                                         this@ChangePasswordActivity,

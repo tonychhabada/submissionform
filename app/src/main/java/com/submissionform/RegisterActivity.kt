@@ -41,7 +41,7 @@ class RegisterActivity : AppCompatActivity() {
                     editUsername.text.toString(),
                     editPassword.text.toString(),
                     editName.text.toString(),
-                    true,
+                    "true",
                     maxid.toString()
 
                 )
