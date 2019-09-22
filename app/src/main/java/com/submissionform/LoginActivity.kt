@@ -54,11 +54,18 @@ class LoginActivity : AppCompatActivity() {
                             for (data in dataSnapshot.children) {
                                 val password = data.child("password").value
                                 val username = data.child("username").value
+                                val name = data.child("name").value.toString();
                                 if (username == editUserName.text.toString() && password == editPassword.text.toString()) {
                                     Common.sharedInsance.saveStringPreference(
                                         data.key,
                                         this@LoginActivity,
                                         "userid"
+                                    )
+
+                                    Common.sharedInsance.saveStringPreference(
+                                        data.child("name").value.toString(),
+                                        this@LoginActivity,
+                                        "name"
                                     )
                                     exists = true;
                                     var intent =

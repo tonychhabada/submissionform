@@ -6,7 +6,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import java.text.*;
-
+//import F
 public class Common {
     public static Common sharedInsance = new Common();
     public static NumberFormat formatter = formatter = NumberFormat.getInstance();
@@ -64,7 +64,16 @@ public class Common {
         editor.commit();
 
     }
-
+//    public static void sendNotificationToUser(String user, final String message) {
+//        Firebase ref = new Firebase(FIREBASE_URL);
+//        final Firebase notifications = ref.child("notificationRequests");
+//
+//        Map notification = new HashMap<>();
+//        notification.put("username", user);
+//        notification.put("message", message);
+//
+//        notifications.push().setValue(notification);
+//    }
     public String getListPreference(Context context, String key) {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
         String value = sharedPrefs.getString(key, "");

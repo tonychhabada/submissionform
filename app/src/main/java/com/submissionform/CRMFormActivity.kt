@@ -20,14 +20,23 @@ import android.view.View
 import android.widget.AdapterView
 import android.R.attr.country
 import android.content.Context
+import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import java.text.SimpleDateFormat
 import java.util.*
 import android.widget.AdapterView.OnItemSelectedListener
+import com.android.volley.NetworkResponse
+import com.android.volley.RequestQueue
+import com.android.volley.Response
+import com.android.volley.VolleyError
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.google.firebase.database.*
 import com.submissionform.Model.Lead
 import com.submissionform.utilities.Common
+import org.json.JSONException
+import org.json.JSONObject
 
 
 class CRMFormActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
@@ -57,11 +66,29 @@ class CRMFormActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
     }
     var update = false;
     var selectedSave = "Document"
+
+    private val requestQueue: RequestQueue by lazy {
+        Volley.newRequestQueue(this.applicationContext)
+    }
+    private val FCM_API = "https://fcm.googleapis.com/fcm/send"
+    private val serverKey = "key=" + "AAAAAJXtd7k:APA91bFzpu7AxxIxbOnbfJgjLcxtjBRxec4W1aLdUOjcrAZK8JXb0gha_oD4-l6chqyejSWdP4OIhWY7tTz0M6J0aEMYll62AIuaWvDDoiuwjORjzDdJVrDDj0OKLgFA9NgD_RRyrFsk"
+    private val contentType = "application/json"
+    internal val TAG = "NOTIFICATION TAG"
+
+     var NOTIFICATION_TITLE: String = ""
+    var NOTIFICATION_MESSAGE: String = ""
+    var TOPIC: String = ""
+//    private val FCM_API = "https://fcm.googleapis.com/fcm/send"
+//    private val serverKey =
+//        "key=AAAAAJXtd7k:APA91bFzpu7AxxIxbOnbfJgjLcxtjBRxec4W1aLdUOjcrAZK8JXb0gha_oD4-l6chqyejSWdP4OIhWY7tTz0M6J0aEMYll62AIuaWvDDoiuwjORjzDdJVrDDj0OKLgFA9NgD_RRyrFsk"
+//    private val contentType = "application/json"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_crmform)
         setTitle("New Lead")
         getSupportActionBar()?.setDisplayHomeAsUpEnabled(true);
+    TOPIC = "/topics/user_admin" //topic has to match what the receiver subscribed to
+    var name = Common.sharedInsance.getListPreference(this,"name")
         database = FirebaseDatabase.getInstance().reference
         database.addValueEventListener( object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
@@ -278,7 +305,23 @@ class CRMFormActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
                     otherSourceText
 
                 )
+                    var name = Common.sharedInsance.getListPreference(this,"name")
+                    NOTIFICATION_TITLE = "New Lead by ${name}"
+                    NOTIFICATION_MESSAGE = "Name : ${editTextName.text.toString()} Contact Number: ${editPhone.text}"
 
+                    val notification = JSONObject()
+                    val notifcationBody = JSONObject()
+                    try {
+                        notifcationBody.put("title", NOTIFICATION_TITLE)
+                        notifcationBody.put("message", NOTIFICATION_MESSAGE)
+
+                        notification.put("to", TOPIC)
+                        notification.put("data", notifcationBody)
+                    } catch (e: JSONException) {
+                        Log.e(TAG, "onCreate: " + e.message)
+                    }
+
+                    sendNotification(notification)
                 database.child("leads").child(maxid.toString()).setValue(lead)
 
 //                AsyncTask.execute {
@@ -373,5 +416,42 @@ class CRMFormActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
     }
     fun isValidEmail(target: CharSequence): Boolean {
         return !TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches()
+    }
+
+    private fun sendNotification(notification: JSONObject) {
+        Log.e("TAG", "sendNotification")
+        val jsonObjectRequest = object : JsonObjectRequest(FCM_API, notification,
+            Response.Listener<JSONObject> { response ->
+            },
+            Response.ErrorListener {
+                    var response=String(it.networkResponse.data,Charsets.UTF_8);
+
+                Log.i("TAG", "onErrorResponse: Didn't work")
+
+
+            }) {
+            override fun parseNetworkError(volleyError: VolleyError?): VolleyError {
+                var response=String(volleyError!!.networkResponse.data,Charsets.UTF_8);
+                return super.parseNetworkError(volleyError)
+            }
+
+            override fun parseNetworkResponse(response: NetworkResponse?): Response<JSONObject> {
+                return super.parseNetworkResponse(response)
+            }
+
+
+            override fun getHeaders(): Map<String, String> {
+                val params = HashMap<String, String>()
+                params["Authorization"] = serverKey
+//                params["Content-Type"] = "application/json; charset=utf-8";
+                return params
+            }
+
+            override fun getBodyContentType(): String {
+                return "application/json; charset=utf-8";
+
+            }
+        }
+        requestQueue.add(jsonObjectRequest)
     }
 }
